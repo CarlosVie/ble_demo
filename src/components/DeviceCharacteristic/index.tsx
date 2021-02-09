@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View, Text, TouchableOpacity} from 'react-native';
+import {View, Text, TouchableOpacity, TextInput} from 'react-native';
 import {Characteristics} from '../../ble/types';
 import SubTitlesRC from '../SubTitleRC';
 import BleManager from 'react-native-ble-manager';
@@ -17,33 +17,17 @@ const DeviceCharacteristc = ({
   characteristc,
 }: DeviceCharacteristcProps) => {
   const [data, setData] = useState<any>();
-
-  function isByteArray(array) {
-    if (array && array.byteLength !== undefined) return true;
-    return false;
-  }
-
-  function convertToHex(hexString: any) {
-    var result = [];
-    while (hexString.length >= 2) {
-      result.push(parseInt(hexString.substring(0, 2), 16));
-      hexString = hexString.substring(2, hexString.length);
-    }
-    return result;
-  }
+  const [value, onChangeText] = useState<string>();
 
   const read = () => {
-    let service;
+    console.log(characteristc.service);
+    console.log(characteristc.characteristic);
 
-    if (!isByteArray(characteristc.service)) {
-      service = convertToHex(characteristc.service);
-    } else {
-      service = characteristc.service;
-    }
-
-    console.log('SERVICE => ', service);
-
-    BleManager.read(deviceId, service, characteristc.characteristic)
+    BleManager.read(
+      deviceId,
+      characteristc.service,
+      characteristc.characteristic,
+    )
       .then((readData: any) => {
         // Success code
         const buffer = Buffer.Buffer.from(readData);
@@ -57,12 +41,13 @@ const DeviceCharacteristc = ({
   };
 
   const write = () => {
-    const stringData = stringToBytes('TEST');
+    const stringData = stringToBytes(value);
+
     BleManager.write(
       deviceId,
       characteristc.service,
       characteristc.characteristic,
-      data,
+      stringData,
     )
       .then(() => {
         // Success code
@@ -115,8 +100,18 @@ const DeviceCharacteristc = ({
           <></>
         )}
       </TouchableOpacity>
-      {data ? (
+      {data && characteristc.properties.includes('Write') ? (
         <View style={{justifyContent: 'center', alignItems: 'center'}}>
+          <TextInput
+            style={{
+              backgroundColor: '#FFFFFF',
+              width: '80%',
+              height: 40,
+              borderRadius: 10,
+              padding: 5,
+            }}
+            onChangeText={(text: string) => onChangeText(text)}
+          />
           <TouchableOpacity
             onPress={write}
             style={{

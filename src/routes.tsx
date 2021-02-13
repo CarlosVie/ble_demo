@@ -2,8 +2,8 @@ import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
 import StartScan from './screens/StartScan';
 import SearchingDevice from './screens/SearchingDevice';
-import FoundDevice from './screens/FoundDevice';
-import ConnectDevice from './screens/Device';
+import DevicesList from './screens/DevicesList';
+import DeviceDetails from './screens/DeviceDetails';
 
 const Stack = createStackNavigator();
 
@@ -21,13 +21,13 @@ const Routes = () => {
         options={{headerShown: false}}
       />
       <Stack.Screen
-        name={'FoundDevice'}
-        component={FoundDevice}
+        name={'DevicesList'}
+        component={DevicesList}
         options={{headerShown: false}}
       />
       <Stack.Screen
-        name={'Device'}
-        component={ConnectDevice}
+        name={'DeviceDetails'}
+        component={DeviceDetails}
         options={{headerShown: false}}
       />
     </Stack.Navigator>

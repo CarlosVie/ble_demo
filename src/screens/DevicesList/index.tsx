@@ -13,10 +13,11 @@ import {DevicesView, DeviceList, Container} from './styles';
 import SubTitlesRC from '../../components/SubTitleRC';
 import TitleRC from '../../components/TitleRC';
 import {View} from 'react-native';
+import {Device} from '../../ble/types';
 const arrow = require('../../../assets/left-arrow.png');
 
-const FoundDevice = () => {
-  const [list, setList] = useState([]);
+const DevicesList = () => {
+  const [list, setList] = useState<Device[]>([]);
   const [refreshing, setRefreshing] = useState(false);
   const navigation = useNavigation();
   const navigate = () => {
@@ -26,7 +27,7 @@ const FoundDevice = () => {
   const getDiscoverdDevices = () => {
     return new Promise((resolve, reject) => {
       BleManager.getDiscoveredPeripherals()
-        .then((devices) => {
+        .then((devices: any) => {
           setList(devices);
           setRefreshing(false);
           resolve(devices);
@@ -39,9 +40,12 @@ const FoundDevice = () => {
     });
   };
 
+  const readDevices = () => {};
+
   const onRefresh = () => {
     setRefreshing(true);
     getDiscoverdDevices();
+    readDevices();
   };
 
   useEffect(() => {
@@ -85,4 +89,4 @@ const FoundDevice = () => {
   );
 };
 
-export default FoundDevice;
+export default DevicesList;

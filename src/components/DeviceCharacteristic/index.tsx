@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import {View, Text, TouchableOpacity, TextInput} from 'react-native';
+import React, {useState, useEffect} from 'react';
+import {View, Text, TouchableOpacity, TextInput, Platform} from 'react-native';
 import {Characteristics} from '../../ble/types';
 import SubTitlesRC from '../SubTitleRC';
 import BleManager from 'react-native-ble-manager';
@@ -18,11 +18,18 @@ const DeviceCharacteristc = ({
 }: DeviceCharacteristcProps) => {
   const [data, setData] = useState<any>();
   const [value, onChangeText] = useState<string>();
+  const [error, setError] = useState<string>();
+  const [success, setSuccess] = useState<boolean>(true);
+  let property;
+
+  const writing = (e: string) => {
+    setError('');
+    if (e) onChangeText(e);
+  };
 
   const read = () => {
     console.log(characteristc.service);
     console.log(characteristc.characteristic);
-
     BleManager.read(
       deviceId,
       characteristc.service,
@@ -30,19 +37,17 @@ const DeviceCharacteristc = ({
     )
       .then((readData: any) => {
         // Success code
-        const buffer = Buffer.Buffer.from(readData);
+        const buffer = Buffer.Buffer.from(readData); // read from byte array to string
         console.log('Read: ' + buffer);
         setData(buffer);
       })
       .catch((error) => {
-        // Failure code
-        console.log('ERROR: ', error);
+        setError(error);
       });
   };
 
   const write = () => {
-    const stringData = stringToBytes(value);
-
+    const stringData = stringToBytes(value); // need to pass from string to byte array
     BleManager.write(
       deviceId,
       characteristc.service,
@@ -50,14 +55,25 @@ const DeviceCharacteristc = ({
       stringData,
     )
       .then(() => {
-        // Success code
         console.log('Write: ' + stringData);
+        setSuccess(false);
       })
       .catch((error) => {
-        // Failure code
+        setError(error);
         console.log(error);
       });
   };
+
+  useEffect(() => {
+    if (Platform.OS === 'android' && Platform.Version >= 23) {
+      const map: Map<string, string> = characteristc.properties;
+      property = map.values;
+      console.log('MAP => ', property);
+    } else {
+      property = characteristc.properties;
+      console.log('STR => ', property);
+    }
+  }, []);
 
   return (
     <View style={{borderRadius: 5, margin: 3}}>
@@ -80,16 +96,7 @@ const DeviceCharacteristc = ({
           <Tag>service: </Tag>
           <Text>{characteristc.service}</Text>
         </Row>
-        <View style={{flexDirection: 'row'}}>
-          <Tag>Properties: </Tag>
-          {characteristc.properties.map((pr) => {
-            return (
-              <View key={pr}>
-                <Text>{pr} </Text>
-              </View>
-            );
-          })}
-        </View>
+
         {characteristc.value ? (
           <View>
             <Text>{characteristc.value.CDVType}</Text>
@@ -100,7 +107,8 @@ const DeviceCharacteristc = ({
           <></>
         )}
       </TouchableOpacity>
-      {data && characteristc.properties.includes('Write') ? (
+      {error ? <Text style={{color: 'red'}}>{error}</Text> : <></>}
+      {data && success ? (
         <View style={{justifyContent: 'center', alignItems: 'center'}}>
           <TextInput
             style={{
@@ -110,7 +118,7 @@ const DeviceCharacteristc = ({
               borderRadius: 10,
               padding: 5,
             }}
-            onChangeText={(text: string) => onChangeText(text)}
+            onChangeText={(text: string) => writing(text)}
           />
           <TouchableOpacity
             onPress={write}
@@ -124,6 +132,7 @@ const DeviceCharacteristc = ({
             }}>
             <Text style={{color: 'white'}}>White</Text>
           </TouchableOpacity>
+          {error ? <Text style={{color: 'red'}}>{error}</Text> : <></>}
         </View>
       ) : (
         <></>

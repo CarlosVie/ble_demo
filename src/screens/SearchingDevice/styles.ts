@@ -1,16 +1,17 @@
 import {View, Text, Image} from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import styled from 'styled-components';
 
-export const Container = styled(View)`
+export const Container = styled(SafeAreaView)`
   flex: 1;
   align-items: center;
-  top: 10%;
+  top: 5%;
 `;
 
 export const SearchView = styled(View)`
   align-items: center;
   justify-content: center;
-  top: 100px;
+  top: 40px;
   width: 80%;
 `;
 

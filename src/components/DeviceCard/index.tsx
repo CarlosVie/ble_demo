@@ -1,8 +1,11 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {Device} from '../../ble/types';
 import {ContainerTouchable, DeviceName} from './styles';
-import {Image} from 'react-native';
+import {Image, Dimensions, Platform} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
+
+const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
 
 const fan = require('../../../assets/fan.png');
 interface DeviceCardProp {
@@ -11,9 +14,13 @@ interface DeviceCardProp {
 
 const DeviceCard = ({device}: DeviceCardProp) => {
   const navigation = useNavigation();
-
   const Link = () => {
-    navigation.navigate('Device', {device: device});
+    navigation.navigate('DeviceDetails', {device: device});
+  };
+
+  const getName = () => {
+    if (device.name === undefined || device.name === null) return false;
+    return true;
   };
 
   return (
@@ -27,7 +34,7 @@ const DeviceCard = ({device}: DeviceCardProp) => {
           tintColor: 'white',
         }}
       />
-      {device.name === undefined ? (
+      {getName ? (
         <DeviceName>NO NAME</DeviceName>
       ) : (
         <DeviceName>{device.name}</DeviceName>

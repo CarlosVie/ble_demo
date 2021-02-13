@@ -1,6 +1,5 @@
 import React from 'react';
 import {View, Text, ScrollView} from 'react-native';
-import {block} from 'react-native-reanimated';
 import {Characteristics, Device} from '../../ble/types';
 import DeviceCharacteristc from '../DeviceCharacteristic';
 import TitleRC from '../TitleRC';

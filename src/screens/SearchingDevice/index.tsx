@@ -22,9 +22,10 @@ const infoS = 'AirCycle suppor:';
 
 const SearchingDevice = () => {
   const navigation = useNavigation();
-  let timeout;
+  let timeout: any;
+
   const navigate = async () => {
-    navigation.navigate('FoundDevice');
+    navigation.navigate('DevicesList');
   };
 
   const cancel = () => {
@@ -50,7 +51,7 @@ const SearchingDevice = () => {
         <SubTitlesRC title={'Searching for Device...'} />
         <LoadView>
           <BluetoohImage source={image} />
-          <ActivityIndicator />
+          <ActivityIndicator size={'large'} color={'#2f3191'} />
         </LoadView>
         <InfoText>{info}</InfoText>
         <InfoText>{infoS}</InfoText>

@@ -1,5 +1,7 @@
 # AirCycle
 
+##### note: this is a PoC as a example to test BLE Lib
+
 ## INSTALL
 
 1. You need to run on a physical device;
